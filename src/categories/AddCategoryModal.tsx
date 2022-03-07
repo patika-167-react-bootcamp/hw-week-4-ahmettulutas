@@ -5,7 +5,6 @@ import EditCategoryModal from './EditCategoryModal';
 import { selectCategories } from './CategoriesSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { addCategory, updateCategory, deleteCategory } from './CategoriesSlice';
-import { selectToken } from '../auth/AuthSlice';
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from '@mui/icons-material/Save';
 
@@ -28,7 +27,6 @@ export default function AddCategoryModal() {
   const categories = useSelector(selectCategories);
   const [newCategory, setNewCategory] = useState({title:""});
   const [editedCategory, setEditedCategory] = useState({title:""});
-  const token = useSelector(selectToken);
   const [open, setOpen] = useState<boolean>(false);
   const dispatch= useDispatch();
   const handleOpen = () => {
@@ -63,7 +61,7 @@ export default function AddCategoryModal() {
           </form>
           <List sx={{overflow:"scroll", maxHeight:"250px"}}>
             {categories && categories.map((category:any) => (
-              <ListItem  key={category.id}>
+              <ListItem sx={{display:"flex", justifyContent:"space-between", alignItems:"stretch"}}  key={category.id}>
                 <TextField defaultValue={category.title} onChange={(e:any) => {setEditedCategory({title:e.target.value})}}></TextField>
                 <EditCategoryModal item={category}/> 
                 <Button

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-// Helper function to get the token from the local storage;
+//token getter function;
 function getCookie(name:any) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -14,6 +14,7 @@ export const login = createAsyncThunk(
          document.cookie = `token=${data.data.token}`;
     })
     const token = getCookie('token'); 
+    console.log(token);
     return token;
 })
 
@@ -34,7 +35,7 @@ const authSlice = createSlice({
         success:getCookie('token') ? true : false,
         loading: false,
         failed:false,
-        token:getCookie('token'),
+        token: getCookie('token')
     },
     reducers:{},
     extraReducers: {
@@ -43,9 +44,8 @@ const authSlice = createSlice({
         },
         [login.fulfilled.toString()]: (state:any, action: any) => {
             state.loading = false;
-            state.success = true;
+            state.success = action.payload ? true : false;
             state.token = action.payload;
-
         },
         [login.rejected.toString()]: (state:any) => {
             state.loading = false;
@@ -56,7 +56,7 @@ const authSlice = createSlice({
         },
         [register.fulfilled.toString()]: (state:any, action: any) => {
             state.loading = false;
-            state.success = true;
+            state.success = action.payload ? true : false;
             state.token = action.payload;
         },
         [register.rejected.toString()]: (state:any) => {
@@ -71,4 +71,5 @@ export default authSlice.reducer;
 export const selectToken = (state:any) => state.auth.token;
 export const selectSuccess = (state:any) => state.auth.success;
 export const selectUserId = (state:any) => state.auth.userId;
+
 

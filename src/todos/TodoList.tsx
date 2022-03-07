@@ -1,18 +1,15 @@
-import { useEffect } from 'react';
-import { selectTodos, getTodos } from '../todos/TodosSlice';
+import { selectTodos, getTodos, filteredTodos } from '../todos/TodosSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import Todo from './todo';
-import {selectToken} from '../auth/AuthSlice';
+import { Container, Typography } from '@mui/material';
 export default function TodoList() {
-  const dispatch = useDispatch();
-  const token = useSelector(selectToken);
   const todos = useSelector(selectTodos);
   return (
-    <main>
-      <h1>Todo List</h1>
+    <Container sx={{overflow:"scroll", maxHeight:"550px"}}>
+      <Typography sx={{fontSize:30}}>Todo List</Typography>
       {todos && todos.map((todo:any) => (
         <Todo key={todo.id} todo={todo}/>
       ))}
-    </main>
+    </Container>
   )
 }

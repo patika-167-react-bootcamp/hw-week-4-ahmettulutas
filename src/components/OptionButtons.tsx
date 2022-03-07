@@ -1,22 +1,23 @@
 import {FormControl, InputLabel, Select, MenuItem, Grid} from '@mui/material'
 import {useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectToken } from '../auth/AuthSlice';
 import { selectCategories, selectStatus} from '../categories/CategoriesSlice';
 import { getStatus } from '../categories/CategoriesSlice';
 
 export default function OptionButtons({categoryId , statusId, handleChange}:any) {
   const categories = useSelector(selectCategories);
-  const token = useSelector(selectToken);
   const statusList = useSelector(selectStatus);
   const dispatch = useDispatch();  
   useEffect(() => {
-      dispatch(getStatus(categoryId));
-    },[categoryId]);
+    // this function gets all the status for each category.
+      categories.forEach((item:any) => {
+        dispatch(getStatus(item.id))  
+          }) 
+    },[]);
 
   return (
    <Grid>
-      <FormControl variant="filled" sx={{ m: 1, minWidth: 120 }}>
+      <FormControl variant="filled" sx={{ minWidth: 160 }}>
         <InputLabel id="demo-simple-select-filled-label">Categories</InputLabel>
         <Select
           labelId="demo-simple-select-filled-label"
@@ -33,7 +34,7 @@ export default function OptionButtons({categoryId , statusId, handleChange}:any)
           }
         </Select>
       </FormControl>
-      <FormControl variant="filled" sx={{ m: 1, minWidth: 120 }}>
+      <FormControl variant="filled" sx={{ marginLeft:1, minWidth: 160 }}>
         <InputLabel id="demo-simple-select-filled-label">Status</InputLabel>
         <Select
           labelId="demo-simple-select-filled-label"

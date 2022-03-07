@@ -1,25 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+
 // token getter function 
 function getCookie(name:any) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts?.pop()?.split(';')?.shift();
   }
-let token = getCookie('token')
-// thunks for categories
+let token = getCookie('token');
+
+/* -------------- CATEGORIES THUNKS -------------------- */
 export const getCategories = createAsyncThunk(
     "categories/getCategories",
     async () => {
-        // token passed in arg
         try {
+            console.log("token",token)
             const response = await axios.get('http://localhost:80/category', {headers: {'Authorization': `Bearer ${token}`}})
             console.log("getting categories from the server", response.data);
             return response.data;
         } catch (error) {
             console.log(error);
         }
-    })
+})
 
 export const addCategory = createAsyncThunk(
     "categories/addCategory",
@@ -34,7 +36,7 @@ export const addCategory = createAsyncThunk(
 export const updateCategory = createAsyncThunk(
     "categories/updateCategory",
     async (arg:any) => {
-        // id, token and category body passed in arg
+        // id and category body passed in arg
         const {id, editedCategory} = arg;
         try {
             console.log(id, editedCategory,token)
@@ -44,7 +46,6 @@ export const updateCategory = createAsyncThunk(
         } catch (error) {
             console.log(error);
         }
-
 })
 export const deleteCategory = createAsyncThunk(
     "categories/deleteCategory",
@@ -56,13 +57,12 @@ export const deleteCategory = createAsyncThunk(
             return arg;
         } catch (error) {
             console.log(error);
-        }
-        
+        }     
 })
 
 
-// thunks for status
-export const getStatus = createAsyncThunk(
+/* -------------- STATUS THUNKS -------------------- */
+ export const getStatus = createAsyncThunk(
     "status/getStatus", 
     async(arg:any) => {
         // categoryId passed in arg
@@ -91,7 +91,7 @@ export const addStatus = createAsyncThunk(
 export const updateStatus = createAsyncThunk(
     "categories/updateStatus",
     async (arg:any) => {
-        // id, token and category body passed in arg
+        // id and category body passed in arg
         const {id, editedStatus} = arg;
         try {
             const response = await axios.put(`http://localhost:80/status/${id}`, editedStatus, {headers: {'Authorization': `Bearer ${token}`}})
@@ -112,7 +112,7 @@ export const deleteStatus = createAsyncThunk(
         } catch (error) {
             console.log(error);
         }
-})
+}) 
 
 
 // categories slice
@@ -233,9 +233,6 @@ const categoriesSlice = createSlice({
             state.pending = false;
             state.failed = true;
         }
-
-        
-
     }
 });
 

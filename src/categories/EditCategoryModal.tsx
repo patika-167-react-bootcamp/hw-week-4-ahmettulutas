@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from 'react';
-import { Modal, Box, Button, MenuItem } from '@mui/material';
-import { FormGroup,  TextField } from '@mui/material';
+import {useState, useEffect} from 'react';
+import { Modal, Box, Button } from '@mui/material';
+import {  TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { List, ListItem, ListItemText } from '@mui/material';
-import { selectStatus, addStatus, getStatus, updateStatus, deleteStatus } from './CategoriesSlice';
+import { List, ListItem } from '@mui/material';
+import { selectStatus, addStatus, updateStatus, deleteStatus, getStatus } from './CategoriesSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import DeleteIcon from "@mui/icons-material/Delete";
-import { selectToken } from '../auth/AuthSlice';
 import SaveIcon from '@mui/icons-material/Save';
+import SearchIcon from '@mui/icons-material/Search';
+
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -26,13 +27,11 @@ const style = {
   
 export default function EditCategoryModal ({item}:any) { 
   const statusList = useSelector(selectStatus);
-  const token = useSelector(selectToken);
   const dispatch = useDispatch();
   const {id} = item;
   const [open, setOpen] = useState<boolean>(false);
   const [newStatus, setNewStatus] = useState({title:"",categoryId:id, color:"red"});
   const [editedStatus, setEditedStatus] = useState({title:"",categoryId:id});
-  
   const handleOpen = () => {
     setOpen(open => !open);
   };
@@ -47,10 +46,11 @@ export default function EditCategoryModal ({item}:any) {
   }
   const handleDelete = (id:any) => {
     dispatch(deleteStatus(id));
+    dispatch(getStatus(id));
   }
   return (  
     <div>
-      <EditIcon onClick={handleOpen}></EditIcon>
+      <SearchIcon onClick={handleOpen}></SearchIcon>
       <Modal
         /* hideBackdrop */
         open={open}
@@ -58,34 +58,34 @@ export default function EditCategoryModal ({item}:any) {
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-        <Box sx={{ ...style, width: "60%", height:"auto"}}>
-          <h2 id="child-modal-title">Add Status</h2>
-          <form onSubmit={handleAdd}>
-            <TextField onChange={(e:any) => {setNewStatus(prev => ({...prev,title:e.target.value}))}} value={newStatus.title} id="parent-modal-title" sx={{m:1}} label="name" variant="filled" />
-            <Button type="submit" sx={{m:1, p:2}} variant="contained" color="success">Add</Button> 
-          </form>
-      <List sx={{overflow:"scroll", maxHeight:"250px"}}>
-         {
-        statusList[id] && statusList[id].map((status:any) => (
-          <ListItem  key={status.id}>
-          <TextField defaultValue={status.title}  onChange={(e:any) => {setEditedStatus(prev => ({...prev,title:e.target.value}))}}></TextField>
-          <Button
-          size="small"
-          startIcon={<DeleteIcon />}
-          color="error"
-          onClick={()=> handleDelete(status.id)}
-          variant="outlined"
-        ></Button>
-        <Button
-          size="small"
-          startIcon={<SaveIcon />}
-          color="error"
-          onClick={()=> handleUpdate(status.id)}
-          variant="outlined"
-        ></Button>
-        </ListItem>))
-         }
-      </List>
+          <Box sx={{ ...style, width: "60%", height:"auto"}}>
+            <h2 id="child-modal-title">Add Status</h2>
+            <form onSubmit={handleAdd}>
+              <TextField onChange={(e:any) => {setNewStatus(prev => ({...prev,title:e.target.value}))}} value={newStatus.title} id="parent-modal-title" sx={{m:1}} label="name" variant="filled" />
+              <Button type="submit" sx={{m:1, p:2}} variant="contained" color="success">Add</Button> 
+            </form>
+          <List sx={{overflow:"scroll", maxHeight:"250px"}}>
+          {
+          statusList[id] && statusList[id].map((status:any) => (
+            <ListItem  sx={{display:"flex", justifyContent:"space-between", alignItems:"stretch"}} key={status.id}>
+                <TextField defaultValue={status.title}  onChange={(e:any) => {setEditedStatus(prev => ({...prev,title:e.target.value}))}}></TextField>
+                <Button
+                  size="small"
+                  startIcon={<DeleteIcon />}
+                  color="error"
+                  onClick={()=> handleDelete(status.id)}
+                  variant="outlined">
+                </Button>
+                <Button
+                  size="small"
+                  startIcon={<SaveIcon />}
+                  color="error"
+                  onClick={()=> handleUpdate(status.id)}
+                  variant="outlined">
+                </Button>
+            </ListItem>
+          ))}
+          </List>
           <Button variant="contained" color="error" onClick={handleOpen}>Close</Button>
         </Box>
       </Modal>  
