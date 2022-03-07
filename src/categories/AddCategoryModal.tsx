@@ -1,12 +1,14 @@
-import { List, ListItem, TextField, ListItemText } from '@mui/material';
+import { FormGroup, List, ListItem, ListItemText, TextField,} from '@mui/material';
 import { Modal, Box, Button } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditCategoryModal from './EditCategoryModal';
 import { selectCategories } from './CategoriesSlice';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { addCategory } from './CategoriesSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { addCategory, updateCategory, deleteCategory } from './CategoriesSlice';
 import { selectToken } from '../auth/AuthSlice';
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from '@mui/icons-material/Save';
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -23,21 +25,26 @@ const style = {
 
 
 export default function AddCategoryModal() {
-  const [newCategory, setNewCategory] = useState({title:""})
   const categories = useSelector(selectCategories);
+  const [newCategory, setNewCategory] = useState({title:""});
+  const [editedCategory, setEditedCategory] = useState({title:""});
   const token = useSelector(selectToken);
   const [open, setOpen] = useState<boolean>(false);
   const dispatch= useDispatch();
   const handleOpen = () => {
     setOpen(open => !open);
   };
-  const handleChange = (e:any) => {
-    setNewCategory(prev=>({title:e.target.value}));
-    console.log(newCategory)
-  }
-  const handleSubmit = (e:any) => {
+  const handleAdd = (e:any) => {
     e.preventDefault();
-    dispatch(addCategory({newCategory,token}));
+    dispatch(addCategory(newCategory));
+    setNewCategory({title:""});
+  }
+  const handleUpdate = (id:any) => {
+    dispatch(updateCategory({id, editedCategory}));
+    setEditedCategory({title:""});
+  }
+  const handleDelete = (id:any) => {
+    dispatch(deleteCategory(id));
   }
   return (
     <div>
@@ -50,17 +57,31 @@ export default function AddCategoryModal() {
         >
         <Box sx={{ ...style, width: "60%", height:"auto" }}>
           <h1>Add Categories</h1>
-          <form onSubmit={handleSubmit}>
-          <TextField onChange={handleChange} value={newCategory.title} id="parent-modal-title" sx={{m:1}} label="name" variant="filled" />
-          <Button type="submit" sx={{m:1, p:2}} variant="contained" color="success">Add</Button> 
+          <form onSubmit={handleAdd}>
+            <TextField onChange={(e:any) => {setNewCategory({title:e.target.value})}} value={newCategory.title} id="parent-modal-title" sx={{m:1}} label="name" variant="filled" />
+            <Button type="submit" sx={{m:1, p:2}} variant="contained" color="success">Add</Button> 
           </form>
-          <List>
+          <List sx={{overflow:"scroll", maxHeight:"250px"}}>
             {categories && categories.map((category:any) => (
-              <ListItem key={category.id}>
-                <ListItemText>{category.title}</ListItemText>
-                <EditCategoryModal categoryId={category.id}/>
+              <ListItem  key={category.id}>
+                <TextField defaultValue={category.title} onChange={(e:any) => {setEditedCategory({title:e.target.value})}}></TextField>
+                <EditCategoryModal item={category}/> 
+                <Button
+                size="small"
+                startIcon={<DeleteIcon />}
+                color="error"
+                onClick={()=> handleDelete(category.id)}
+                variant="outlined"
+              ></Button>
+              <Button
+                size="small"
+                startIcon={<SaveIcon />}
+                color="error"
+                onClick={()=> handleUpdate(category.id)}
+                variant="outlined"
+              ></Button>
               </ListItem>
-            ))}
+            ))} 
           </List>
         </Box>  
       </Modal>

@@ -10,11 +10,8 @@ function getCookie(name:any) {
 export const login = createAsyncThunk(
     "auth/login",
     async (arg:any) => {
-        let userId;
         await axios.post("http://localhost:80/auth/login", arg).then(data => {
-         console.log(data);
          document.cookie = `token=${data.data.token}`;
-         userId = data.data.userId;
     })
     const token = getCookie('token'); 
     return token;
@@ -25,7 +22,6 @@ export const register = createAsyncThunk(
     "auth/register",
     async (arg:any) => {
        await axios.post("http://localhost:80/auth/register", arg).then(data => {
-         console.log(data);
          document.cookie = `token=${data.data.token}`;
     })
     const token = getCookie('token'); 
@@ -40,13 +36,7 @@ const authSlice = createSlice({
         failed:false,
         token:getCookie('token'),
     },
-    reducers:{
-        logOut: (state:any) => {
-            state.success = false;
-            state.token = null;
-            document.cookie = "";
-        }
-    },
+    reducers:{},
     extraReducers: {
         [login.pending.toString()]: (state:any) => {
             state.loading = true;
@@ -81,4 +71,4 @@ export default authSlice.reducer;
 export const selectToken = (state:any) => state.auth.token;
 export const selectSuccess = (state:any) => state.auth.success;
 export const selectUserId = (state:any) => state.auth.userId;
-export const {logOut} = authSlice.actions;
+

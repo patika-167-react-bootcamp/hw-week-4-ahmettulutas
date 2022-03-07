@@ -2,26 +2,25 @@ import {useState, useEffect} from 'react';
 import {TextField, Typography} from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import {useSelector, useDispatch} from 'react-redux';
-import {selectToken} from '../auth/AuthSlice';
+import {useDispatch} from 'react-redux';
 import {addTodo} from './TodosSlice';
-import OptionButtons from '../OptionButtons';
+import OptionButtons from '../components/OptionButtons';
 import { getCategories } from '../categories/CategoriesSlice';
+
 export default function AddTodo() {
-  const token = useSelector(selectToken);
   const dispatch = useDispatch();  
-  const [todoBody, setTodoBody] = useState({title:"ahmet", categoryId:1,statusId:0,color:"red"});
+  const [todoBody, setTodoBody] = useState({title:"", categoryId:2,statusId:0,color:"red"});
   useEffect(() => {
-    dispatch(getCategories(token));
-  })
+    dispatch(getCategories());
+    
+  },[todoBody.categoryId])
   const handleChange = (e: any) => {
     const {name, value} = e.target;
     setTodoBody(prev => ({...prev, [name]: value}));
-    console.log(todoBody);
   }
   const handleSubmit = (e:any) => {
       e.preventDefault();
-      dispatch(addTodo({todoBody, token}));
+      dispatch(addTodo(todoBody));
       setTodoBody({title:"", categoryId:1,statusId:1,color:"red"});
   } 
   return (

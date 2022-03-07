@@ -1,17 +1,12 @@
 import { useEffect } from 'react';
-import {selectTodos, getTodos} from './todos/TodosSlice';
-import { useDispatch,useSelector } from 'react-redux';
-import { selectToken } from './auth/AuthSlice';
+import { selectTodos, getTodos } from '../todos/TodosSlice';
+import { useSelector, useDispatch } from 'react-redux';
 import Todo from './todo';
-
+import {selectToken} from '../auth/AuthSlice';
 export default function TodoList() {
   const dispatch = useDispatch();
+  const token = useSelector(selectToken);
   const todos = useSelector(selectTodos);
-  const token = useSelector(selectToken); 
-  useEffect(() => { 
-    dispatch(getTodos(token));
-    console.log(todos);
-  },[]);
   return (
     <main>
       <h1>Todo List</h1>
